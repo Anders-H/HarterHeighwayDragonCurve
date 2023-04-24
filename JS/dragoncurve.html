@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Harter–Heighway dragon curve</title>
+</head>
+<body style="background-color: #777777">
+    <canvas id="c" width="800" height="600" style="background-color: #ffffff;"></canvas>
+<script>
+// https://www.winsoft.se/2018/01/harter-heighways-drakkurva/
+var c = document.getElementById("c");
+var ctx = c.getContext("2d");
+
+const generations = 18;
+
+var x = 180;
+var y = 380;
+
+const color1 = "#000000";
+const color2 = "#ff0000";
+
+var idx = 0;
+var col = true;
+var dir = 0;
+const delay = 1;
+
+const steps = [];
+steps.push(new Step(true, false));
+
+for (i = 1; i < generations; i++) {
+    var lastIndex = steps.length - 1;
+    steps.push(new Step(true, true));
+
+    for (j = lastIndex; j >= 0; j--) {
+        steps.push(new Step(!(steps[j].right), false));
+    }
+}
+
+function Step(right, sep) {
+    this.right = right;
+    this.sep = sep;
+}
+
+setTimeout(drawStep, delay);
+
+function drawStep() {
+    var s = steps[idx];
+    var c = (col ? color1 : color2);    
+    ctx.fillStyle = c;
+    ctx.fillRect(x, y, 1, 1);
+
+    switch (dir) {
+        case 0:
+            y--;
+            break;
+        case 1:
+            x++;
+            break;
+        case 2:
+            y++;
+            break;
+        case 3:
+            x--;
+            break;
+    }
+
+    if (s.right)
+        dir++;
+    else
+        dir--;
+    
+    if (dir < 0)
+        dir = 3;
+    else if (dir > 3)
+        dir = 0;
+    
+    if (s.sep)
+        col = !(col);
+
+    if (idx < steps.length - 1) {
+        idx++;
+
+        if (idx%15 == 0)
+            setTimeout(drawStep, delay);
+        else
+            drawStep();
+    }
+}
+
+</script>
+</body>
+</html>
